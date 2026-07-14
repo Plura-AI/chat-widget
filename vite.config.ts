@@ -18,23 +18,24 @@ export default defineConfig(({ mode }) => {
       plugins: [
         react(),
         tailwindcss(),
-        // Inject processed CSS as a <style> tag — consumers just import the JS
+        // Inject processed CSS into document.head when the React package is imported
         cssInjectedByJs(),
       ],
-      // Don't copy public/ into the lib output
       publicDir: false,
       build: {
         outDir: 'dist/lib',
-        // Inline assets ≤ 100 KB as base64 data URLs (covers the avatar PNG)
         assetsInlineLimit: 1024 * 100,
         lib: {
-          entry: resolve(__dirname, 'src/index.ts'),
+          // Two entry points: the React export + the Web Component export
+          entry: {
+            index: resolve(__dirname, 'src/index.ts'),
+            element: resolve(__dirname, 'src/element.ts'),
+          },
           name: 'PluraChat',
           formats: ['es', 'cjs'],
-          fileName: (fmt) => `plura-chat.${fmt === 'es' ? 'mjs' : 'cjs'}`,
+          fileName: (fmt, name) => `${name}.${fmt === 'es' ? 'mjs' : 'cjs'}`,
         },
         rollupOptions: {
-          // React is a peer dependency — don't bundle it
           external: ['react', 'react-dom', 'react/jsx-runtime'],
           output: {
             globals: {
@@ -49,14 +50,14 @@ export default defineConfig(({ mode }) => {
   }
 
   // ── Embed bundle  (npm run build:embed) ──────────────────────────────────
-  // Self-contained IIFE — bundles React + CSS + avatar. Drop one <script> tag.
+  // Self-contained IIFE — bundles React + CSS + avatar. Mounted in a Shadow
+  // Root so no styles ever leak into the host page.
   return {
     plugins: [
       react(),
       tailwindcss(),
-      cssInjectedByJs(),
+      // No cssInjectedByJs here: the loader injects CSS into the shadow root itself
     ],
-    // Replace Node globals that React references internally
     define: {
       'process.env.NODE_ENV': JSON.stringify('production'),
     },

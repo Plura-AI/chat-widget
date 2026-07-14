@@ -1,6 +1,6 @@
 {
   "name": "@useplura/chat",
-  "version": "0.1.6",
+  "version": "0.2.1",
   "description": "Embeddable chat widget for usePlura flows",
   "type": "module",
   "license": "MIT",
@@ -17,14 +17,19 @@
     "scripts",
     "README.md"
   ],
-  "main": "./dist/lib/plura-chat.cjs",
-  "module": "./dist/lib/plura-chat.mjs",
+  "main": "./dist/lib/index.cjs",
+  "module": "./dist/lib/index.mjs",
   "types": "./dist/lib/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/lib/plura-chat.mjs",
-      "require": "./dist/lib/plura-chat.cjs",
+      "import": "./dist/lib/index.mjs",
+      "require": "./dist/lib/index.cjs",
       "types": "./dist/lib/index.d.ts"
+    },
+    "./element": {
+      "import": "./dist/lib/element.mjs",
+      "require": "./dist/lib/element.cjs",
+      "types": "./dist/lib/element.d.ts"
     },
     "./embed": "./dist/embed/embed.js"
   },

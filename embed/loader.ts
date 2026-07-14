@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 /**
  * Plura embed loader — standalone bundle for the <script> tag use-case.
  *
@@ -38,7 +39,9 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { ChatWidget, type ChatWidgetProps } from '../src/ChatWidget'
-import '../src/index.css'
+// Import CSS as a raw string so we can inject it into a Shadow Root
+// rather than into document.head — this gives complete style isolation.
+import styles from '../src/index.css?inline'
 
 // ─── PluraConfig global type ──────────────────────────────────────────────────
 
@@ -148,15 +151,31 @@ function resolveProps(): ChatWidgetProps | null {
   return props
 }
 
-// ─── Mount ────────────────────────────────────────────────────────────────────
+// ─── Mount inside a Shadow Root ──────────────────────────────────────────────
+// Shadow DOM guarantees zero CSS bleed: our Tailwind styles never touch the
+// host page, and the host page's styles never touch our widget.
 
 function mount() {
   const props = resolveProps()
   if (!props) return
 
+  // Host element — sits in <body> but is invisible itself
+  const host = document.createElement('div')
+  host.id = 'plura-chat-host'
+  document.body.appendChild(host)
+
+  // Shadow root — completely isolated styling context
+  const shadow = host.attachShadow({ mode: 'open' })
+
+  // Inject all Tailwind + keyframe CSS into the shadow root
+  const styleEl = document.createElement('style')
+  styleEl.textContent = styles
+  shadow.appendChild(styleEl)
+
+  // Transparent container for React
   const container = document.createElement('div')
-  container.id = 'plura-chat-root'
-  document.body.appendChild(container)
+  container.style.cssText = 'display:contents'
+  shadow.appendChild(container)
 
   createRoot(container).render(React.createElement(ChatWidget, props))
 }
