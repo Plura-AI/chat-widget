@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@keyframes plura-slide-up {
+  from { opacity: 0; transform: translateY(20px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+@keyframes plura-msg-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+@keyframes plura-dot {
+  0%, 60%, 100% { transform: translateY(0);   opacity: 0.35; }
+  30%            { transform: translateY(-5px); opacity: 1;    }
+}
+
+@keyframes plura-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
