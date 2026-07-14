@@ -56,6 +56,10 @@ export default defineConfig(({ mode }) => {
       tailwindcss(),
       cssInjectedByJs(),
     ],
+    // Replace Node globals that React references internally
+    define: {
+      'process.env.NODE_ENV': JSON.stringify('production'),
+    },
     build: {
       outDir: 'dist/embed',
       assetsInlineLimit: 1024 * 100,

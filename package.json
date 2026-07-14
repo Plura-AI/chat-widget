@@ -1,10 +1,10 @@
 {
   "name": "@useplura/chat",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Embeddable chat widget for usePlura flows",
   "type": "module",
   "license": "MIT",
-  "author": "Verification Technologies LLC",
+  "author": "Plura AI LLC",
   "homepage": "https://plura.ai",
   "repository": {
     "type": "git",
