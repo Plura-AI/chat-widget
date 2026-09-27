@@ -1,0 +1,39 @@
+# Required check for main (Mindvana engineering standard, baseline): every PR and every push
+# to main must install cleanly from package-lock.json, type-check and build the demo app,
+# build the published npm package + embed bundle, and have no high/critical advisories.
+# Lint is not run yet: `npm run lint` has 1 pre-existing error (react-hooks/set-state-in-effect
+# in ChatWidget). Add it once that's cleared.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: CI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Type check + build
+        run: npm run build
+
+      - name: Build package + embed (what npm publish ships)
+        run: npm run build:all
+
+      - name: Dependency audit
+        run: npm audit --audit-level=high
